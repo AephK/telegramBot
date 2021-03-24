@@ -48,8 +48,8 @@ def video(update, context):
     os.remove(cwd + "temp.mp4")
 
 #def test(update, context):
-#    name = update.message.from_user.first_name
-#    context.bot.send_message(chat_id=update.effective_chat.id, text=name)
+#    message = context.args[0]
+#    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 def dab(update, context):
     chat_id=update.effective_chat.id
@@ -72,7 +72,6 @@ def roll(update, context):
     result = 0
     diceCount = 0
     diceType = 0
-    d = 'd'
 
     if context.args[0]:
         if 'd' in context.args[0]:
