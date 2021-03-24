@@ -40,9 +40,9 @@ def video(update, context):
         'video' : file,
         'disable_notification' : 'true'
         }
-    requests.post("https://api.telegram.org/bot1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510/sendVideo?chat_id={}".format(update.effective_chat.id),api_kwargs={"silent" : "flags5?true"}, files=files)
+    requests.post("https://api.telegram.org/bot1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510/sendVideo?chat_id={}".format(update.effective_chat.id), disable_notification=True, files=files)
     file.close()
-    context.bot.send_message(chat_id=update.effective_chat.id,api_kwargs={"silent" : "flags5?true"}, text=name)
+    context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
 
     os.remove(cwd + "temp.temp")
     os.remove(cwd + "temp.mp4")
@@ -96,7 +96,7 @@ def roll(update, context):
     else:
         message = name + " failed the constipation check."
 
-    context.bot.send_message(chat_id=update.effective_chat.id, api_kwargs={"silent" : "flags5?true"}, text=message)
+    context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=message)
 
 
 
