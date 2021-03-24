@@ -40,7 +40,7 @@ def video(update, context):
         'video' : file,
         'disable_notification' : 'true'
         }
-    requests.post("https://api.telegram.org/bot1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510/sendVideo?chat_id={}".format(update.effective_chat.id), disable_notification=True, files=files)
+    requests.post("https://api.telegram.org/bot1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510/sendVideo?chat_id={}".format(update.effective_chat.id), files=files)
     file.close()
     context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
 
@@ -70,11 +70,16 @@ def roll(update, context):
     context.bot.deleteMessage(chat_id, message_id)
     name = update.message.from_user.first_name
     result = 0
+    diceCount = 0
+    diceType = 0
+    d = 'd'
 
-    if context.args:
-        roll = context.args[0]
-        diceCount = roll.split('d')[0]
-        diceType = roll.split('d')[1]
+    if context.args[0]:
+        if 'd' in context.args[0]:
+            roll = context.args[0]
+            diceCount = roll.split('d')[0]
+            diceType = roll.split('d')[1]
+        
     else:
         diceCount = 1
         diceType = 20
