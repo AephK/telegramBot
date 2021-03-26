@@ -4,7 +4,7 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import InlineQueryHandler 
 
-updater = Updater(token='1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510', use_context=True)
+updater = Updater(token='', use_context=True)
 
 dispatcher = updater.dispatcher
 
