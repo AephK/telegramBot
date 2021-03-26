@@ -75,7 +75,7 @@ def roll(update, context):
     diceCount = 0
     diceType = 0
 
-    if context.args[0]:
+    if context.args:
         if 'd' in context.args[0]:
             roll = context.args[0]
             diceCount = roll.split('d')[0]
