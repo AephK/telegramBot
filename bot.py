@@ -10,10 +10,12 @@ dispatcher = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-cwd = os.getcwd() + '/'
-ffmpeg = '/usr/bin/ffmpeg'
-youtubedl = "/home/aephk/.local/bin/youtube-dl"
-
+#cwd = os.getcwd() + '/'
+#ffmpeg = "/usr/bin/ffmpeg"
+#youtubedl = "/home/aephk/.local/bin/youtube-dl"
+cwd = os.getcwd() + '\\'
+ffmpeg = "C:\youtubedl\ffmpeg\bin\ffmpeg.exe"
+youtubedl = "C:\youtubedl\youtube-dl.exe"
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="me bot")
 
