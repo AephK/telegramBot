@@ -46,7 +46,7 @@ def video(update, context):
         'video' : file,
         'disable_notification' : 'true'
         }
-    requests.post("https://api.telegram.org/bot1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510/sendVideo?chat_id={}".format(update.effective_chat.id), files=files)
+    requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id), files=files)
     file.close()
     context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
 
@@ -67,7 +67,7 @@ def dab(update, context):
 
     file = open(cwd + 'dab.jpg', 'rb')
     files = {'photo' : file}
-    requests.post("https://api.telegram.org/bot1567021524:AAFHy6GiHcnND082qadOFaXwPdYBA7cI510/sendPhoto?chat_id={}".format(update.effective_chat.id), files=files, data=caption)
+    requests.post("https://api.telegram.org/bot" + token + "/sendPhoto?chat_id={}".format(update.effective_chat.id), files=files, data=caption)
     file.close()
 
 def roll(update, context):
