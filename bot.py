@@ -1,8 +1,11 @@
 #!/usr/bin/python3
-import os, subprocess, logging, requests, random, math
+import os, subprocess, logging, requests, random, math, sys
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import InlineQueryHandler 
+
+sys.stdout = open('bot.log', "w")
+sys.stderr = open("botErr.log", "w")
 
 scriptDir = os.path.dirname('__file__')
 tokenFile = open(scriptDir + 'token', 'r')
@@ -18,8 +21,9 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 #ffmpeg = "/usr/bin/ffmpeg"
 #youtubedl = "/home/aephk/.local/bin/youtube-dl"
 cwd = os.getcwd() + '\\'
-ffmpeg = "C:\youtubedl\ffmpeg\bin\ffmpeg.exe"
-youtubedl = "C:\youtubedl\youtube-dl.exe"
+ffmpeg = "C:\\youtubedl\\ffmpeg\bin\ffmpeg.exe"
+youtubedl = "C:\\youtubedl\\youtube-dl.exe"
+
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="me bot")
 
