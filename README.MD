@@ -1,4 +1,4 @@
-Simple Telegram bot writtin in Python using Python Telegram Bot
+Simple Telegram bot writtin in Python using [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot)
 
 Features:
 /dab : send a squidward dabbing image and inform the chat that you have just dabbed.
