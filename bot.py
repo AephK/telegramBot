@@ -4,8 +4,6 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler
 from telegram.ext import InlineQueryHandler
 
-#Clear old log and create new log file
-os.remove("bot.log")
 sys.stdout = open('bot.log', "w")
 sys.stderr = open("botErr.log", "w")
 
