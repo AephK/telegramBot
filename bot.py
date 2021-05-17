@@ -2,7 +2,7 @@
 import os, subprocess, logging, requests, random, math, sys
 from telegram.ext import Updater
 from telegram.ext import CommandHandler
-from telegram.ext import InlineQueryHandler 
+from telegram.ext import InlineQueryHandler
 
 sys.stdout = open('bot.log', "w")
 sys.stderr = open("botErr.log", "w")
@@ -32,12 +32,13 @@ def v(update, context):
     message_id=update.message.message_id
     name = "Sent by: " + update.message.from_user.first_name
     url = context.args[0]
+    print(url)
     context.bot.deleteMessage(chat_id, message_id)
     downloadRequest = youtubedl + " --ffmpeg-location " + ffmpeg + " --max-filesize 50M --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
-    
+
     os.system(downloadRequest)
     os.rename(cwd + "temp.mp4", cwd + "temp.temp")
-    
+
     try:
         command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" ' + cwd + 'temp.mp4'
         os.system(command)
@@ -88,7 +89,7 @@ def roll(update, context):
             roll = context.args[0]
             diceCount = roll.split('d')[0]
             diceType = roll.split('d')[1]
-        
+
     else:
         diceCount = 1
         diceType = 20
