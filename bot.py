@@ -27,7 +27,7 @@ youtubedl = "C:\\youtubedl\\youtube-dl.exe"
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="me bot")
 
-def video(update, context):
+def v(update, context):
     chat_id=update.effective_chat.id
     message_id=update.message.message_id
     name = "Sent by: " + update.message.from_user.first_name
@@ -122,7 +122,7 @@ dispatcher.add_handler(start_handler)
 start_handler = CommandHandler('start', start)
 dispatcher.add_handler(start_handler)
 
-start_handler = CommandHandler('video', video)
+start_handler = CommandHandler('v', v)
 dispatcher.add_handler(start_handler)
 
 start_handler = CommandHandler('dab', dab)
