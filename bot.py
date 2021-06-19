@@ -48,12 +48,11 @@ def v(update, context):
 
     file = open(cwd + 'temp.mp4', 'rb')
     files = {
-        'video' : file,
-        'disable_notification' : 'true'
+        'video' : file
         }
-    requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id), files=files)
+    requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&caption=" + name, files=files)
     file.close()
-    context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
+    #context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
 
     os.remove(cwd + "temp.temp")
     os.remove(cwd + "temp.mp4")
