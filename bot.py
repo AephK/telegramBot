@@ -54,8 +54,7 @@ def v(update, context):
     file.close()
     #context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
 
-    os.remove(cwd + "temp.temp")
-    os.remove(cwd + "temp.mp4")
+    os.remove(cwd + "temp.*")
 
 #def test(update, context):
 #    message = context.args[0]
