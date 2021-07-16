@@ -20,9 +20,11 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 #cwd = os.getcwd() + '/'
 #ffmpeg = "/usr/bin/ffmpeg"
 #youtubedl = "/home/aephk/.local/bin/youtube-dl"
+#deleteTemp = 'rm temp.*'
 cwd = os.getcwd() + '\\'
 ffmpeg = "C:\\youtubedl\\ffmpeg\bin\ffmpeg.exe"
 youtubedl = "C:\\youtubedl\\youtube-dl.exe"
+deleteTemp = 'del temp.*'
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="me bot")
@@ -52,9 +54,9 @@ def v(update, context):
         }
     requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&caption=" + name, files=files)
     file.close()
-    #context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=name)
 
-    os.remove(cwd + "temp.*")
+    os.system(deleteTemp)
+    #os.remove(cwd + "temp.*")
 
 #def test(update, context):
 #    message = context.args[0]
