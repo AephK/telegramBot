@@ -18,7 +18,7 @@ dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 #cwd = os.getcwd() + '/'
-#ffmpeg = "/usr/bin/ffmpeg"
+#ffmpeg = "/home/aephk/ffmpeg/ffmpeg"
 #youtubedl = "/home/aephk/.local/bin/yt-dlp"
 #deleteTemp = 'rm temp.*'
 cwd = os.getcwd() + '\\'
@@ -39,9 +39,9 @@ def v(update, context):
     downloadRequest = youtubedl + " --ffmpeg-location " + ffmpeg + " --max-filesize 50M --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
 
     os.system(downloadRequest)
-    os.rename(cwd + "temp.mp4", cwd + "temp.temp")
-
+    
     try:
+        os.rename(cwd + "temp.mp4", cwd + "temp.temp")
         command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" ' + cwd + 'temp.mp4'
         os.system(command)
     except:
