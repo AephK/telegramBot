@@ -19,10 +19,12 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 #cwd = os.getcwd() + '/'
 #ffmpeg = "/home/aephk/ffmpeg/ffmpeg"
+#ffprobe = "/home/aephk/ffmpeg/ffmpeg"
 #youtubedl = "/home/aephk/.local/bin/yt-dlp"
 #deleteTemp = 'rm temp.*'
 cwd = os.getcwd() + '\\'
 ffmpeg = "C:\\youtubedl\\ffmpeg\bin\ffmpeg.exe"
+ffprobe = "C:\\youtubedl\\ffmpeg\bin\ffprobe.exe"
 youtubedl = "C:\\youtubedl\\yt-dlp.exe"
 deleteTemp = 'del temp.*'
 
@@ -30,19 +32,27 @@ def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="me bot")
 
 def v(update, context):
+    os.system(deleteTemp)
     chat_id=update.effective_chat.id
     message_id=update.message.message_id
     name = "Sent by: " + update.message.from_user.first_name
     url = context.args[0]
     print(url)
     context.bot.deleteMessage(chat_id, message_id)
-    downloadRequest = youtubedl + " --ffmpeg-location " + ffmpeg + " --max-filesize 50M --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
+    downloadRequest = youtubedl + " -S 'res:720,+br' --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
 
     os.system(downloadRequest)
     
     try:
         os.rename(cwd + "temp.mp4", cwd + "temp.temp")
-        command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" ' + cwd + 'temp.mp4'
+
+        #Get video length and calculate max video bitrate in order to come in under 50MB
+        sourceLength = ffprobe + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + cwd + "temp.temp"
+        finalMaxBitrate = math.floor((25000/sourceLength)*8)
+        videoBitrate = finalMaxBitrate-0.128
+
+        command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v ' + videoBitrate + "M  -b:a 128k -maxrate " + finalMaxBitrate + "M -bufsize 1M" + cwd + 'temp.mp4'
+
         os.system(command)
     except:
         os.rename(cwd + "temp.temp", cwd + "temp.mp4")
