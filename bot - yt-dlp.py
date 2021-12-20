@@ -48,7 +48,7 @@ def v(update, context):
 
         #Get video length and calculate max video bitrate in order to come in under 50MB
         sourceLength = ffprobe + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + cwd + "temp.temp"
-        finalMaxBitrate = math.floor((25000/sourceLength)*8)
+        finalMaxBitrate = math.floor((25/sourceLength)*8)
         videoBitrate = finalMaxBitrate-0.128
 
         command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v ' + videoBitrate + "M  -b:a 128k -maxrate " + finalMaxBitrate + "M -bufsize 1M" + cwd + 'temp.mp4'
