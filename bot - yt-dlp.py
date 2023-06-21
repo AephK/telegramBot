@@ -18,8 +18,8 @@ dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 #cwd = os.getcwd() + '/'
-#ffmpeg = "/home/aephk/ffmpeg/ffmpeg"
-#ffprobe = "/home/aephk/ffmpeg/ffmpeg"
+#ffmpeg = "/usr/bin/ffmpeg"
+#ffprobe = "/usr/bin/ffprobe"
 #youtubedl = "/home/aephk/.local/bin/yt-dlp"
 #deleteTemp = 'rm temp.*'
 cwd = os.getcwd() + '\\'
@@ -35,8 +35,8 @@ def v(update, context):
     os.system(deleteTemp)
     chat_id=update.effective_chat.id
     message_id=update.message.message_id
-    name = "Sent by: " + update.message.from_user.first_name
     url = context.args[0]
+    name = "Sent by: " + update.message.from_user.first_name
     print(url)
     context.bot.deleteMessage(chat_id, message_id)
     downloadRequest = youtubedl + " -S 'res:720,+br' --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
@@ -62,7 +62,7 @@ def v(update, context):
     files = {
         'video' : file
         }
-    requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&caption=" + name, files=files)
+    requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&disable_notification=true&caption=" + name, files=files)
     file.close()
 
     os.system(deleteTemp)
