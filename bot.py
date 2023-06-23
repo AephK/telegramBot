@@ -1,21 +1,16 @@
 #!/usr/bin/python3
-import os, subprocess, logging, requests, random, math, sys
-from telegram.ext import Updater
-from telegram.ext import CommandHandler
-from telegram.ext import InlineQueryHandler
+import os, subprocess, logging, requests, random, math, sys, asyncio
+from telegram import ForceReply, Update
+from telegram.ext import Updater, CommandHandler, Application, ContextTypes, MessageHandler
+#from telegram.ext import InlineQueryHandler
 
 sys.stdout = open('bot.log', "w")
 sys.stderr = open("botErr.log", "w")
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 scriptDir = os.path.dirname('__file__')
 tokenFile = open(scriptDir + 'token', 'r')
 token = tokenFile.read()
-
-updater = Updater(token=token, use_context=True)
-
-dispatcher = updater.dispatcher
-
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 #cwd = os.getcwd() + '/'
 #ffmpeg = "/usr/bin/ffmpeg"
@@ -23,23 +18,31 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 #youtubedl = "/home/aephk/.local/bin/yt-dlp"
 #deleteTemp = 'rm temp.*'
 cwd = os.getcwd() + '\\'
-ffmpeg = "C:\\youtubedl\\ffmpeg\bin\ffmpeg.exe"
-ffprobe = "C:\\youtubedl\\ffmpeg\bin\ffprobe.exe"
+ffmpeg = "C:\\youtubedl\\ffmpeg.exe"
+ffprobe = "C:\\youtubedl\\ffprobe.exe"
 youtubedl = "C:\\youtubedl\\yt-dlp.exe"
 deleteTemp = 'del temp.*'
 
-def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="me bot")
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    test = update.effective_chat.id
+    await update.message.reply_text(
+        "Me bot!"
+    )
 
-def v(update, context):
+#async def v(update, context):
+async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     os.system(deleteTemp)
-    chat_id=update.effective_chat.id
+    chat_id1=update.effective_chat.id
     message_id=update.message.message_id
     url = context.args[0]
-    name = "Sent by: " + update.message.from_user.first_name
+    capt = '<a href="' + url + '">Sent by: ' + update.message.from_user.first_name + '</a>'
     print(url)
-    context.bot.deleteMessage(chat_id, message_id)
-    downloadRequest = youtubedl + " -S 'res:720,+br' --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
+    update.message.reply_video
+    await (
+    context.bot.deleteMessage(chat_id1, message_id)
+    )
+    downloadRequest = youtubedl + " -S res:720,+br --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
 
     os.system(downloadRequest)
     
@@ -62,17 +65,20 @@ def v(update, context):
     files = {
         'video' : file
         }
-    requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&disable_notification=true&caption=" + name, files=files)
+    await (
+        context.bot.send_video(chat_id=chat_id1, video=file, parse_mode='html', caption=capt)
+    )
+    #requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&disable_notification=true&caption=" + name, files=files)
     file.close()
 
     os.system(deleteTemp)
     #os.remove(cwd + "temp.*")
 
-#def test(update, context):
+#async def test(update, context):
 #    message = context.args[0]
 #    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
-def dab(update, context):
+async def dab(update, context):
     chat_id=update.effective_chat.id
     message_id=update.message.message_id
     context.bot.deleteMessage(chat_id, message_id)
@@ -85,7 +91,7 @@ def dab(update, context):
     requests.post("https://api.telegram.org/bot" + token + "/sendPhoto?chat_id={}".format(update.effective_chat.id), files=files, data=caption)
     file.close()
 
-def roll(update, context):
+async def roll(update, context):
     chat_id=update.effective_chat.id
     message_id=update.message.message_id
     context.bot.deleteMessage(chat_id, message_id)
@@ -123,23 +129,18 @@ def roll(update, context):
 
     context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=message)
 
+def main() -> None:
 
 
+    application = Application.builder().token(token).build()
 
+    #application.add_handler(CommandHandler('roll', roll))
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('v', v))
+    #application.add_handler(CommandHandler('dab', dab))
+    #application.add_handler(CommandHandler('test', test))
 
-start_handler = CommandHandler('roll', roll)
-dispatcher.add_handler(start_handler)
+    application.run_polling()
 
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
-
-start_handler = CommandHandler('v', v)
-dispatcher.add_handler(start_handler)
-
-start_handler = CommandHandler('dab', dab)
-dispatcher.add_handler(start_handler)
-
-#start_handler = CommandHandler('test', test)
-#dispatcher.add_handler(start_handler)
-
-updater.start_polling()
+if __name__ == "__main__":
+    main()
