@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, logging, requests, random, math, sys
+import os, logging, random, math, sys, platform
 from telegram import Update
 from telegram.ext import CommandHandler, Application, ContextTypes
 
@@ -11,16 +11,23 @@ scriptDir = os.path.dirname('__file__')
 tokenFile = open(scriptDir + 'token', 'r')
 token = tokenFile.read()
 
-#cwd = os.getcwd() + '/'
-#ffmpeg = "/usr/bin/ffmpeg"
-#ffprobe = "/usr/bin/ffprobe"
-#youtubedl = "/home/aephk/.local/bin/yt-dlp"
-#deleteTemp = 'rm temp.*'
-cwd = os.getcwd() + '\\'
-ffmpeg = "C:\\youtubedl\\ffmpeg.exe"
-ffprobe = "C:\\youtubedl\\ffprobe.exe"
-youtubedl = "C:\\youtubedl\\yt-dlp.exe"
-deleteTemp = 'del temp.*'
+if platform.system() == 'Linux':
+    cwd = os.getcwd() + '/'
+    ffmpeg = "/usr/bin/ffmpeg"
+    ffprobe = "/usr/bin/ffprobe"
+    youtubedl = "/home/aephk/.local/bin/yt-dlp"
+    deleteTemp = 'rm temp.*'
+
+elif platform.system():
+    cwd = os.getcwd() + '\\'
+    ffmpeg = "C:\\youtubedl\\ffmpeg.exe"
+    ffprobe = "C:\\youtubedl\\ffprobe.exe"
+    youtubedl = "C:\\youtubedl\\yt-dlp.exe"
+    deleteTemp = 'del temp.*'
+
+else:
+    print("Unable to determin OS version")
+    exit()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
