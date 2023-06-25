@@ -77,12 +77,12 @@ async def dab(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.bot.deleteMessage(chat_id1, message_id)
     )
 
-    name = update.message.from_user.first_name.upper() + " JUST DABBED!!! XD"
-    caption = {'caption' : name}
+    capt = update.message.from_user.first_name.upper() + " JUST DABBED!!! XD"
 
     file = open(cwd + 'dab.jpg', 'rb')
-    files = {'photo' : file}
-    requests.post("https://api.telegram.org/bot" + token + "/sendPhoto?chat_id={}".format(update.effective_chat.id), files=files, data=caption)
+    await (
+        context.bot.send_photo(chat_id=chat_id1, photo=file, caption=capt)
+    )
     file.close()
 
 async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -124,8 +124,11 @@ async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     else:
         message = name + " failed the constipation check."
-
-    context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=message)
+    
+    await(
+        context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=message)
+    )
+    
 
 def main() -> None:
 
