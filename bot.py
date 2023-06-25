@@ -146,7 +146,6 @@ def main() -> None:
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('v', v))
     application.add_handler(CommandHandler('dab', dab))
-    #application.add_handler(CommandHandler('test', test))
 
     application.run_polling()
 
