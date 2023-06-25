@@ -1,8 +1,7 @@
 #!/usr/bin/python3
-import os, subprocess, logging, requests, random, math, sys, asyncio
-from telegram import ForceReply, Update
-from telegram.ext import Updater, CommandHandler, Application, ContextTypes, MessageHandler
-#from telegram.ext import InlineQueryHandler
+import os, logging, requests, random, math, sys
+from telegram import Update
+from telegram.ext import CommandHandler, Application, ContextTypes
 
 sys.stdout = open('bot.log', "w")
 sys.stderr = open("botErr.log", "w")
@@ -25,12 +24,10 @@ deleteTemp = 'del temp.*'
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
-    test = update.effective_chat.id
     await update.message.reply_text(
         "Me bot!"
     )
 
-#async def v(update, context):
 async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     os.system(deleteTemp)
     chat_id1=update.effective_chat.id
@@ -68,20 +65,17 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await (
         context.bot.send_video(chat_id=chat_id1, video=file, parse_mode='html', caption=capt)
     )
-    #requests.post("https://api.telegram.org/bot" + token + "/sendVideo?chat_id={}".format(update.effective_chat.id) + "&disable_notification=true&caption=" + name, files=files)
     file.close()
 
     os.system(deleteTemp)
-    #os.remove(cwd + "temp.*")
 
-#async def test(update, context):
-#    message = context.args[0]
-#    context.bot.send_message(chat_id=update.effective_chat.id, text=message)
-
-async def dab(update, context):
-    chat_id=update.effective_chat.id
+async def dab(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id1=update.effective_chat.id
     message_id=update.message.message_id
-    context.bot.deleteMessage(chat_id, message_id)
+
+    await (
+    context.bot.deleteMessage(chat_id1, message_id)
+    )
 
     name = update.message.from_user.first_name.upper() + " JUST DABBED!!! XD"
     caption = {'caption' : name}
@@ -91,10 +85,14 @@ async def dab(update, context):
     requests.post("https://api.telegram.org/bot" + token + "/sendPhoto?chat_id={}".format(update.effective_chat.id), files=files, data=caption)
     file.close()
 
-async def roll(update, context):
-    chat_id=update.effective_chat.id
+async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id1=update.effective_chat.id
     message_id=update.message.message_id
-    context.bot.deleteMessage(chat_id, message_id)
+
+    await (
+    context.bot.deleteMessage(chat_id1, message_id)
+    )
+
     name = update.message.from_user.first_name
     result = 0
     diceCount = 0
@@ -134,10 +132,10 @@ def main() -> None:
 
     application = Application.builder().token(token).build()
 
-    #application.add_handler(CommandHandler('roll', roll))
+    application.add_handler(CommandHandler('roll', roll))
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('v', v))
-    #application.add_handler(CommandHandler('dab', dab))
+    application.add_handler(CommandHandler('dab', dab))
     #application.add_handler(CommandHandler('test', test))
 
     application.run_polling()
