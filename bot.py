@@ -70,7 +70,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         'video' : file
         }
     await (
-        context.bot.send_video(chat_id=chat_id1, video=file, parse_mode='html', caption=capt)
+        context.bot.send_video(chat_id=chat_id1, video=file, parse_mode='html', caption=capt, disable_notification=True)
     )
     file.close()
 
@@ -88,7 +88,7 @@ async def dab(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     file = open(cwd + 'dab.jpg', 'rb')
     await (
-        context.bot.send_photo(chat_id=chat_id1, photo=file, caption=capt)
+        context.bot.send_photo(chat_id=chat_id1, photo=file, caption=capt, disable_notification=True)
     )
     file.close()
 
