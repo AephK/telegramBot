@@ -76,22 +76,6 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     os.system(deleteTemp)
 
-async def dab(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    chat_id1=update.effective_chat.id
-    message_id=update.message.message_id
-
-    await (
-    context.bot.deleteMessage(chat_id1, message_id)
-    )
-
-    capt = update.message.from_user.first_name.upper() + " JUST DABBED!!! XD"
-
-    file = open(cwd + 'dab.jpg', 'rb')
-    await (
-        context.bot.send_photo(chat_id=chat_id1, photo=file, caption=capt, disable_notification=True)
-    )
-    file.close()
-
 async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id1=update.effective_chat.id
     message_id=update.message.message_id
@@ -145,7 +129,6 @@ def main() -> None:
     application.add_handler(CommandHandler('roll', roll))
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('v', v))
-    application.add_handler(CommandHandler('dab', dab))
 
     application.run_polling()
 
