@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import os, logging, random, math, sys, platform
+import os, logging, random, math, sys, platform, urllib.request
 from telegram import Update
 from telegram.ext import CommandHandler, Application, ContextTypes
 
@@ -40,7 +40,11 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     chat_id1=update.effective_chat.id
     message_id=update.message.message_id
     url = context.args[0]
-    capt = '<a href="' + url + '">Sent by: ' + update.message.from_user.first_name + '</a>'
+
+    webpage = urllib.request.urlopen(url).read()
+    title = str(webpage).split('<title>')[1].split('</title>')[0]
+
+    capt = title + '\n<a href="' + url + '">Sent by: ' + update.message.from_user.first_name + '</a>'
     print(url)
     update.message.reply_video
     await (
