@@ -41,7 +41,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message_id=update.message.message_id
     url = context.args[0]
 
-    capt = title + '\n<a href="' + url + '">Sent by: ' + update.message.from_user.first_name + '</a>'
+    capt = '<a href="' + url + '">Sent by: ' + update.message.from_user.first_name + '</a>'
     print(url)
     update.message.reply_video
     await (
