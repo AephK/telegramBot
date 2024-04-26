@@ -41,9 +41,6 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message_id=update.message.message_id
     url = context.args[0]
 
-    webpage = urllib.request.urlopen(url).read()
-    title = str(webpage).split('<title>')[1].split('</title>')[0]
-
     capt = title + '\n<a href="' + url + '">Sent by: ' + update.message.from_user.first_name + '</a>'
     print(url)
     update.message.reply_video
