@@ -2,10 +2,11 @@
 import os, logging, random, math, sys, platform, urllib.request
 from telegram import Update
 from telegram.ext import CommandHandler, Application, ContextTypes
+import yt_dlp
 
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 sys.stdout = open('bot.log', "w")
 sys.stderr = open("botErr.log", "w")
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 scriptDir = os.path.dirname('__file__')
 tokenFile = open(scriptDir + 'token', 'r')
@@ -47,10 +48,25 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await (
     context.bot.deleteMessage(chat_id1, message_id)
     )
-    downloadRequest = youtubedl + " -S res:720,+br --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
 
-    os.system(downloadRequest)
-    
+    URLS = "'{}'".format(url)
+
+    #ydl_opts = {
+    #    'usenetrc' : 'true',
+    #    'format' : 'res:720,+br',
+    #    'ffmpeg_location' : ffmpeg,
+    #    'merge-output-format' : 'mp4',
+    #    'outtmpl' : cwd + 'temp.mp4'
+    #}
+
+    ydl_opts = {'usenetrc' : 'true','format' : 'best[height<=720]','ffmpeg_location' : ffmpeg,'merge-output-format' : 'mp4','outtmpl' : cwd + 'temp.mp4'}
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download(URLS)
+
+    #downloadRequest = youtubedl + " --netrc -S res:720,+br --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
+    #os.system(downloadRequest)
+
     try:
         os.rename(cwd + "temp.mp4", cwd + "temp.temp")
 
@@ -58,13 +74,13 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         sourceLength = ffprobe + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + cwd + "temp.temp"
         finalMaxBitrate = math.floor((25/sourceLength)*8)
         videoBitrate = finalMaxBitrate-0.128
-
         command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v ' + videoBitrate + "M  -b:a 128k -maxrate " + finalMaxBitrate + "M -bufsize 1M" + cwd + 'temp.mp4'
-
+        
         os.system(command)
-    except:
-        os.rename(cwd + "temp.temp", cwd + "temp.mp4")
 
+    except:
+        if os.path.isfile(cwd + "temp.temp"):
+            os.rename(cwd + "temp.temp", cwd + "temp.mp4")            
 
     file = open(cwd + 'temp.mp4', 'rb')
     files = {
