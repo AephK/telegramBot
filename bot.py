@@ -27,7 +27,7 @@ elif platform.system():
     deleteTemp = 'del temp.*'
 
 else:
-    print("Unable to determin OS version")
+    print("Unable to determine OS version")
     exit()
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
