@@ -49,20 +49,14 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.bot.deleteMessage(chat_id1, message_id)
     )
 
-    URLS = "'{}'".format(url)
-
-    #ydl_opts = {
-    #    'usenetrc' : 'true',
-    #    'format' : 'res:720,+br',
-    #    'ffmpeg_location' : ffmpeg,
-    #    'merge-output-format' : 'mp4',
-    #    'outtmpl' : cwd + 'temp.mp4'
-    #}
-
-    ydl_opts = {'usenetrc' : 'true','format' : 'best[height<=720]','ffmpeg_location' : ffmpeg,'merge-output-format' : 'mp4','outtmpl' : cwd + 'temp.mp4'}
+    ydl_opts = {'usenetrc' : 'true',
+		'format_sort' : ['res:720', '+br'],
+		'ffmpeg_location' : ffmpeg,
+		'merge_output_format' : 'mp4',
+		'outtmpl': cwd + 'temp.mp4'}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        ydl.download(URLS)
+        ydl.download(url)
 
     #downloadRequest = youtubedl + " --netrc -S res:720,+br --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
     #os.system(downloadRequest)
