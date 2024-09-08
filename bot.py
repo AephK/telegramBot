@@ -49,7 +49,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.bot.deleteMessage(chat_id1, message_id)
     )
 
-    ydl_opts = {'usenetrc' : 'true',
+    ydl_opts = {'cookiefile' : '/home/aephk/cookies.txt',
 		'format_sort' : ['res:720', '+br'],
 		'ffmpeg_location' : ffmpeg,
 		'merge_output_format' : 'mp4',
