@@ -63,22 +63,29 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(url)
 
-    originalSize = int(ffmpeg.probe(cwd + "temp.mp4")["format"]["size"])
 
+
+    #Get video length and calculate max video bitrate in order to come in under 25MB?
+    #use ffprobe to get the file size in bytes, compare to 25MiB, if bigger convert based on the size
+    #to ensure it comes in under 25MiB
+    originalSize = int(ffmpeg.probe(cwd + "temp.mp4")["format"]["size"])   
     if (originalSize > 2621000):
         try:
             print("renaming mp4 to temp")
             os.rename(cwd + "temp.mp4", cwd + "temp.temp")
 
-            #Get video length and calculate max video bitrate in order to come in under 50MB (25MB?)
+            #get the length of the video in seconds
             sourceLength = ffmpeg.probe(cwd + "temp.temp")["format"]["duration"]
-            print("SourceLength: " + sourceLength)
+            #based on the length in seconds, get the final max total bitrate (audio and video)
             finalMaxBitrate = ((25/int(float((sourceLength))))*8)
+            #take 128KB/s off of the max final bitrate to fit the audio in with a rate of 128KB/s
             videoBitrate = finalMaxBitrate-0.128
+            #transcode the video using the above specs
+            #need to change -c:v h264 to h264_qsv once qsv CPU passed through to VM
             command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264 -b:v ' + str(videoBitrate) + "M -c:a copy -b:a 128k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
 
             os.system(command)
-
+        #if the above fails, rename the file back to temp.mp4 and continue on
         except:
             print("renaming temp to mp4")
             if os.path.isfile(cwd + "temp.temp"):
