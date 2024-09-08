@@ -1,8 +1,12 @@
 #!/usr/bin/python3
-import os, logging, random, math, sys, platform, urllib.request
+import os, logging, random, math, sys, platform, urllib.request, ffmpeg
 from telegram import Update
 from telegram.ext import CommandHandler, Application, ContextTypes
 import yt_dlp
+
+#clear up exisiting logs
+#os.system("rm bot.log")
+os.system("rm botErr.log")
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 sys.stdout = open('bot.log', "w")
@@ -14,14 +18,15 @@ token = tokenFile.read()
 
 if platform.system() == 'Linux':
     cwd = os.getcwd() + '/'
-    ffmpeg = "/usr/bin/ffmpeg"
+    #ffmpegLoc = "/usr/bin/ffmpeg"
+    ffmpegLoc = '/usr/lib/jellyfin-ffmpeg/ffmpeg'
     ffprobe = "/usr/bin/ffprobe"
     youtubedl = "/home/aephk/.local/bin/yt-dlp"
     deleteTemp = 'rm temp.*'
 
 elif platform.system():
     cwd = os.getcwd() + '\\'
-    ffmpeg = "C:\\youtubedl\\ffmpeg.exe"
+    ffmpegLoc = "C:\\youtubedl\\ffmpeg.exe"
     ffprobe = "C:\\youtubedl\\ffprobe.exe"
     youtubedl = "C:\\youtubedl\\yt-dlp.exe"
     deleteTemp = 'del temp.*'
@@ -51,28 +56,28 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     ydl_opts = {'cookiefile' : '/home/aephk/cookies.txt',
 		'format_sort' : ['res:720', '+br'],
-		'ffmpeg_location' : ffmpeg,
+		'ffmpeg_location' : ffmpegLoc,
 		'merge_output_format' : 'mp4',
 		'outtmpl': cwd + 'temp.mp4'}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(url)
 
-    #downloadRequest = youtubedl + " --netrc -S res:720,+br --ffmpeg-location " + ffmpeg + " --merge-output-format mp4 -o " + cwd + "temp.mp4 " + url
-    #os.system(downloadRequest)
-
     try:
+        print("renaming mp4 to temp")
         os.rename(cwd + "temp.mp4", cwd + "temp.temp")
 
         #Get video length and calculate max video bitrate in order to come in under 50MB
-        sourceLength = ffprobe + " -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " + cwd + "temp.temp"
-        finalMaxBitrate = math.floor((25/sourceLength)*8)
+        sourceLength = ffmpeg.probe(cwd + "temp.temp")["format"]["duration"]
+        print("SourceLength: " + sourceLength)
+        finalMaxBitrate = ((25/int(float((sourceLength))))*8)
         videoBitrate = finalMaxBitrate-0.128
-        command = ffmpeg + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -b:v ' + videoBitrate + "M  -b:a 128k -maxrate " + finalMaxBitrate + "M -bufsize 1M" + cwd + 'temp.mp4'
-        
+        command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264 -b:v ' + str(videoBitrate) + "M -c:a copy -b:a 128k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
+
         os.system(command)
 
     except:
+        print("renaming temp to mp4")
         if os.path.isfile(cwd + "temp.temp"):
             os.rename(cwd + "temp.temp", cwd + "temp.mp4")            
 
