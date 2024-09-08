@@ -66,7 +66,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
     #Get video length and calculate max video bitrate in order to come in under 25MB?
-    #use ffprobe to get the file size in bytes, compare to 25MiB, if bigger convert based on the size
+    #use ffprobe to get the file size in bytes, compare to 25MiB, if bigger convert based on the length
     #to ensure it comes in under 25MiB
     originalSize = int(ffmpeg.probe(cwd + "temp.mp4")["format"]["size"])   
     if (originalSize > 2621000):
