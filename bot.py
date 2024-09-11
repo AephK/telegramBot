@@ -1,16 +1,17 @@
 #!/usr/bin/python3
-import os, logging, random, math, sys, platform, urllib.request, ffmpeg
+import os, logging, random, math, sys, platform, urllib.request, ffmpeg, subprocess
 from telegram import Update
 from telegram.ext import CommandHandler, Application, ContextTypes
 import yt_dlp
 
-#clear up exisiting logs
-#os.system("rm bot.log")
-os.system("rm botErr.log")
-
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 sys.stdout = open('bot.log', "w")
 sys.stderr = open("botErr.log", "w")
+
+#clear up exisiting logs
+#os.system("rm bot.log")
+#os.system("rm botErr.log")
+subprocess.Popen("rm botErr.log", shell=True).wait()
 
 scriptDir = os.path.dirname('__file__')
 tokenFile = open(scriptDir + 'token', 'r')
@@ -42,7 +43,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    os.system(deleteTemp)
+    #os.system(deleteTemp)
+    subprocess.Popen(deleteTemp, shell=True).wait()
     chat_id1=update.effective_chat.id
     message_id=update.message.message_id
     url = context.args[0]
@@ -55,37 +57,31 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
     ydl_opts = {'cookiefile' : '/home/aephk/cookies.txt',
-		'format_sort' : ['res:720', '+br'],
-		'ffmpeg_location' : ffmpegLoc,
-		'merge_output_format' : 'mp4',
-		'outtmpl': cwd + 'temp.mp4'}
+        'format_sort' : ['res:720', '+br'],
+        'ffmpeg_location' : ffmpegLoc,
+        'merge_output_format' : 'mp4',
+        'outtmpl': cwd + 'temp.mp4'}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(url)
 
+    originalSize = int(ffmpeg.probe(cwd + "temp.mp4")["format"]["size"])
 
-
-    #Get video length and calculate max video bitrate in order to come in under 25MB?
-    #use ffprobe to get the file size in bytes, compare to 25MiB, if bigger convert based on the length
-    #to ensure it comes in under 25MiB
-    originalSize = int(ffmpeg.probe(cwd + "temp.mp4")["format"]["size"])   
     if (originalSize > 2621000):
         try:
             print("renaming mp4 to temp")
             os.rename(cwd + "temp.mp4", cwd + "temp.temp")
 
-            #get the length of the video in seconds
+            #Get video length and calculate max video bitrate in order to come in under 50MB (25MB?)
             sourceLength = ffmpeg.probe(cwd + "temp.temp")["format"]["duration"]
-            #based on the length in seconds, get the final max total bitrate (audio and video)
+            print("SourceLength: " + sourceLength)
             finalMaxBitrate = ((25/int(float((sourceLength))))*8)
-            #take 128KB/s off of the max final bitrate to fit the audio in with a rate of 128KB/s
             videoBitrate = finalMaxBitrate-0.128
-            #transcode the video using the above specs
-            #need to change -c:v h264 to h264_qsv once qsv CPU passed through to VM
-            command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264 -b:v ' + str(videoBitrate) + "M -c:a copy -b:a 128k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
+            command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264_qsv -b:v ' + str(videoBitrate) + "M -c:a copy -b:a 128k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
 
-            os.system(command)
-        #if the above fails, rename the file back to temp.mp4 and continue on
+            #os.system(command)
+            subprocess.Popen(command, shell=True).wait()
+
         except:
             print("renaming temp to mp4")
             if os.path.isfile(cwd + "temp.temp"):
@@ -100,7 +96,8 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     file.close()
 
-    os.system(deleteTemp)
+    #os.system(deleteTemp)
+    subprocess.Popen(deleteTemp, shell=True).wait()
 
 async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id1=update.effective_chat.id
