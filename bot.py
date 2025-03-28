@@ -57,10 +57,11 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
     ydl_opts = {'cookiefile' : '/home/aephk/cookies.txt',
-        'format_sort' : ['res:720', '+br'],
-        'ffmpeg_location' : ffmpegLoc,
-        'merge_output_format' : 'mp4',
-        'outtmpl': cwd + 'temp.mp4'}
+#               'format_sort' : ['res:720', '+br'],
+                'format_sort' : ['res:1280', '+br'],
+                'ffmpeg_location' : ffmpegLoc,
+                'merge_output_format' : 'mp4',
+                'outtmpl': cwd + 'temp.mp4'}
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(url)
@@ -76,8 +77,12 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             sourceLength = ffmpeg.probe(cwd + "temp.temp")["format"]["duration"]
             print("SourceLength: " + sourceLength)
             finalMaxBitrate = ((25/int(float((sourceLength))))*8)
-            videoBitrate = finalMaxBitrate-0.128
-            command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264_qsv -b:v ' + str(videoBitrate) + "M -c:a copy -b:a 128k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
+            audioBitrate=64
+            videoBitrate = finalMaxBitrate-(audioBitrate/1000)
+            videoBitrate = math.floor(videoBitrate)
+            if (videoBitrate > 2):
+                videoBitrate = 2
+            command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264_qsv -b:v ' + str(videoBitrate) + "M -c:a copy -b:a " + str(audioBitrate) + "k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
 
             #os.system(command)
             subprocess.Popen(command, shell=True).wait()
@@ -85,7 +90,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         except:
             print("renaming temp to mp4")
             if os.path.isfile(cwd + "temp.temp"):
-                os.rename(cwd + "temp.temp", cwd + "temp.mp4")            
+                os.rename(cwd + "temp.temp", cwd + "temp.mp4")
 
     file = open(cwd + 'temp.mp4', 'rb')
     files = {
@@ -138,11 +143,11 @@ async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     else:
         message = name + " failed the constipation check."
-    
+
     await(
         context.bot.send_message(chat_id=update.effective_chat.id, disable_notification=True, text=message)
     )
-    
+
 
 def main() -> None:
 
