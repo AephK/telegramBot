@@ -68,7 +68,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     originalSize = int(ffmpeg.probe(cwd + "temp.mp4")["format"]["size"])
 
-    if (originalSize > 2621000):
+    if (originalSize > 26210000):
         try:
             print("renaming mp4 to temp")
             os.rename(cwd + "temp.mp4", cwd + "temp.temp")
