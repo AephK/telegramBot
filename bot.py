@@ -19,7 +19,7 @@ token = tokenFile.read()
 
 if platform.system() == 'Linux':
     cwd = os.getcwd() + '/'
-    #ffmpegLoc = "/usr/bin/ffmpeg"
+    cookieFile = '/home/aephk/cookies.txt'
     ffmpegLoc = '/usr/lib/jellyfin-ffmpeg/ffmpeg'
     ffprobe = "/usr/bin/ffprobe"
     youtubedl = "/home/aephk/.local/bin/yt-dlp"
@@ -27,6 +27,7 @@ if platform.system() == 'Linux':
 
 elif platform.system():
     cwd = os.getcwd() + '\\'
+    cookieFile = ''
     ffmpegLoc = "C:\\youtubedl\\ffmpeg.exe"
     ffprobe = "C:\\youtubedl\\ffprobe.exe"
     youtubedl = "C:\\youtubedl\\yt-dlp.exe"
@@ -56,8 +57,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     context.bot.deleteMessage(chat_id1, message_id)
     )
 
-    ydl_opts = {'cookiefile' : '/home/aephk/cookies.txt',
-#               'format_sort' : ['res:720', '+br'],
+    ydl_opts = {'cookiefile' : cookieFile,
                 'format_sort' : ['res:1280', '+br'],
                 'ffmpeg_location' : ffmpegLoc,
                 'merge_output_format' : 'mp4',
