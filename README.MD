@@ -1,4 +1,4 @@
-Simple Telegram bot written in Python using [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot) and [YT-DLP] (https://github.com/yt-dlp/yt-dlp)
+Simple Telegram bot written in Python using [Python Telegram Bot](https://github.com/python-telegram-bot/python-telegram-bot) and [YT-DLP](https://github.com/yt-dlp/yt-dlp)
 
 ---
 
