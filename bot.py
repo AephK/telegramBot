@@ -22,15 +22,13 @@ if platform.system() == 'Linux':
     cookieFile = '/home/aephk/cookies.txt'
     ffmpegLoc = '/usr/lib/jellyfin-ffmpeg/ffmpeg'
     ffprobe = "/usr/bin/ffprobe"
-    youtubedl = "/home/aephk/.local/bin/yt-dlp"
     deleteTemp = 'rm temp.*'
 
 elif platform.system():
     cwd = os.getcwd() + '\\'
-    cookieFile = ''
+    cookieFile = 'C:\\youtubedl\\cookies.txt'
     ffmpegLoc = "C:\\youtubedl\\ffmpeg.exe"
     ffprobe = "C:\\youtubedl\\ffprobe.exe"
-    youtubedl = "C:\\youtubedl\\yt-dlp.exe"
     deleteTemp = 'del temp.*'
 
 else:
@@ -44,7 +42,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    #os.system(deleteTemp)
     subprocess.Popen(deleteTemp, shell=True).wait()
     chat_id1=update.effective_chat.id
     message_id=update.message.message_id
@@ -58,6 +55,7 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
     ydl_opts = {'cookiefile' : cookieFile,
+                                      
                 'format_sort' : ['res:1280', '+br'],
                 'ffmpeg_location' : ffmpegLoc,
                 'merge_output_format' : 'mp4',
@@ -84,7 +82,6 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 videoBitrate = 2
             command = ffmpegLoc + " -i " + cwd + 'temp.temp -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -c:v h264_qsv -b:v ' + str(videoBitrate) + "M -c:a copy -b:a " + str(audioBitrate) + "k -maxrate " + str(finalMaxBitrate) + "M -bufsize 1M " + cwd + 'temp.mp4'
 
-            #os.system(command)
             subprocess.Popen(command, shell=True).wait()
 
         except:
@@ -101,7 +98,6 @@ async def v(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     file.close()
 
-    #os.system(deleteTemp)
     subprocess.Popen(deleteTemp, shell=True).wait()
 
 async def roll(update: Update, context: ContextTypes.DEFAULT_TYPE):
